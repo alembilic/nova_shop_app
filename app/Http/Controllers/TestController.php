@@ -68,4 +68,19 @@ class TestController extends Controller
 
         return 0;
     }
+
+    public function popularProducts()
+    {
+        $data = DB::select("
+        SELECT items.name, count(items.name) as amount, sum(orders.grand_total) total_sum 
+        FROM `ordered_items` as items 
+        inner join orders on items.order_id = orders.id
+        where orders.status = 'complete'
+        group by items.name
+        order by amount desc
+        limit 20
+        ");
+
+        return $data;
+    }
 }

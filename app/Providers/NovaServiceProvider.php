@@ -8,6 +8,7 @@ use App\Nova\Metrics\TotalSales;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
+use Acme\Analytics\Analytics;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
@@ -60,7 +61,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         return [
             new AverageCLV,
             new PurchaseFrequency,
-            new TotalSales
+            new TotalSales,
+            (new Analytics)->withData()
         ];
     }
 
