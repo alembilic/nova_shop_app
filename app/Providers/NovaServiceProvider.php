@@ -65,7 +65,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             new AverageCLV,
             new PurchaseFrequency,
             new TotalSales,
-            (new Analytics)->withMeta((new TestController)->popularProducts())
+            (new Analytics)->withMeta((new TestController)->popularProducts(1, 'YTD'))
         ];
     }
 

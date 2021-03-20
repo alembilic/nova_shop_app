@@ -16,11 +16,11 @@ class DeepDive extends Dashboard
     public function cards()
     {
         return [
-            (new Analytics())->withMeta((new DeepDiveDashController)->byOrder(1)),
-            (new Analytics())->withMeta((new DeepDiveDashController)->byOrder(2)),
-            (new Analytics())->withMeta((new DeepDiveDashController)->byOrder(3)),
-            (new Analytics())->withMeta((new DeepDiveDashController)->byOrder(4)),
-            (new Analytics())->withMeta((new DeepDiveDashController)->byOrder(5))
+            (new Analytics())->withMeta((new DeepDiveDashController)->byOrder(1, 'YTD')),
+            (new Analytics())->withMeta((new DeepDiveDashController)->byOrder(2, 'YTD')),
+            (new Analytics())->withMeta((new DeepDiveDashController)->byOrder(3, 'YTD')),
+            (new Analytics())->withMeta((new DeepDiveDashController)->byOrder(4, 'YTD')),
+            (new Analytics())->withMeta((new DeepDiveDashController)->byOrder(5, 'YTD'))
         ];
     }
 

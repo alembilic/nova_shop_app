@@ -17,31 +17,6 @@ class PurchaseFrequency extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        // $range = $request->range;
-        // $timezone = $request->timezone;
-        // $dates = $this->currentRange($range, $timezone);
-        // $prev_dates = $this->previousRange($range, $timezone);
-
-        // $result = Customer::where(
-        //     'first_purchase',
-        //     '>',
-        //     $dates[0]->toDateString()
-        // )->where(
-        //     'first_purchase',
-        //     '<',
-        //     $dates[1]->toDateString()
-        // )->sum('apfr');
-
-        // $prev_result = Customer::where(
-        //     'first_purchase',
-        //     '>',
-        //     $prev_dates[0]->toDateString()
-        // )->where(
-        //     'first_purchase',
-        //     '<',
-        //     $prev_dates[1]->toDateString()
-        // )->sum('apfr');
-
         return $this->sum($request, Customer::class, 'apfr', 'first_purchase');
     }
 

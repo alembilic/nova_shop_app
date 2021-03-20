@@ -4,14 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\OrderedItem;
 use App\Models\Store;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use DateTime;
 
 class TestController extends Controller
 {
-    public function test($store_id)
+    public function test($store_id = 0)
     {
         //clearing DB
         $clear = Customer::query()->delete();
@@ -76,22 +78,82 @@ class TestController extends Controller
         return 0;
     }
 
-    public function popularProducts()
+    public function popularProducts($filter = null)
     {
+        $whereDate = '';
+        if (isset($filter)) {
+            $ranges = $this->getRange(
+                $filter
+            );
+            $whereDate = " and items.created_at between '" . $ranges[0]->format('Y-m-d h:m:s') . "' and '" . $ranges[1]->format('Y-m-d h:m:s') . "'";
+        }
+
         $db_data = DB::select("
         SELECT items.name, count(items.name) as amount, sum(orders.grand_total) total_sum 
         FROM `ordered_items` as items 
         inner join orders on items.order_id = orders.id
-        where orders.status = 'complete'
+        where orders.status = 'complete' " . $whereDate . " 
         group by items.name
         order by amount desc
         limit 20
         ");
 
+        $timeFilters = (new DateTimeController())->getFilters();
+        $filters = array();
+        foreach ($timeFilters as $key => $value) {
+            array_push($filters, ['key' => $key, 'value' => $value]);
+        }
+
         return [
             'title' => 'Most popular products',
             'heads' => ['name', 'amount', 'total sum'],
-            'rows' => $db_data
+            'rows' => $db_data,
+            'timeFilters' => $filters
+        ];
+    }
+
+    public function getRange($range)
+    {
+        $dates = explode(',', $range);
+
+        if (isset($dates[1])) {
+            return [
+                Carbon::createFromFormat('Y-m-d', $dates[0]),
+                Carbon::createFromFormat('Y-m-d', $dates[1])
+            ];
+        }
+
+        if ($range == 'TODAY') {
+            return [
+                today(),
+                now(),
+            ];
+        }
+
+        if ($range == 'MTD') {
+            return [
+                now()->firstOfMonth(),
+                now(),
+            ];
+        }
+
+        if ($range == 'QTD') {
+            return [
+                Carbon::firstDayOfQuarter(),
+                now()
+            ];
+        }
+
+        if ($range == 'YTD') {
+            return [
+                now()->firstOfYear(),
+                now(),
+            ];
+        }
+
+        return [
+            now()->subDays($range),
+            now(),
         ];
     }
 }

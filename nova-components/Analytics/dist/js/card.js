@@ -267,9 +267,68 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["card"],
+
+  methods: {
+    filter: function filter(event) {
+      var _this = this;
+
+      if (this.card.title === "Most popular products") {
+        axios.get("/api/popularProducts/" + event.target.value).then(function (response) {
+          return _this.card = response.data;
+        });
+      }
+
+      if (this.card.title === "Most popular first order products") {
+        axios.get("/api/deepDive/1/" + event.target.value).then(function (response) {
+          return _this.card = response.data;
+        });
+      }
+
+      if (this.card.title === "Most popular secound order products") {
+        axios.get("/api/deepDive/2/" + event.target.value).then(function (response) {
+          return _this.card = response.data;
+        });
+      }
+
+      if (this.card.title === "Most popular third order products") {
+        axios.get("/api/deepDive/3/" + event.target.value).then(function (response) {
+          return _this.card = response.data;
+        });
+      }
+
+      if (this.card.title === "Most popular fourd order products") {
+        axios.get("/api/deepDive/4/" + event.target.value).then(function (response) {
+          return _this.card = response.data;
+        });
+      }
+
+      if (this.card.title === "Most popular fifth order products") {
+        axios.get("/api/deepDive/5/" + event.target.value).then(function (response) {
+          return _this.card = response.data;
+        });
+      }
+    }
+  },
 
   mounted: function mounted() {
     //
@@ -288,10 +347,35 @@ var render = function() {
     "card",
     { staticClass: "flex flex-col items-center justify-center" },
     [
-      _c("h1", { staticClass: "text-90 font-normal text-2xl p-4" }, [
-        _vm._v(_vm._s(_vm.card.title))
+      _c("div", { staticClass: "w-full p-4" }, [
+        _c("div", { staticClass: "text-90 font-normal text-2xl p-4 inline" }, [
+          _vm._v("\n      " + _vm._s(_vm.card.title) + "\n    ")
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "right inline float-right" }, [
+          _c(
+            "select",
+            {
+              staticClass:
+                "select-box-sm ml-auto min-w-24 h-6 text-xs appearance-none bg-40 pl-2 pr-6 active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline",
+              on: {
+                change: function($event) {
+                  return _vm.filter($event)
+                }
+              }
+            },
+            _vm._l(_vm.card.timeFilters, function(filter, index) {
+              return _c(
+                "option",
+                { key: index, domProps: { value: filter.key } },
+                [_vm._v("\n          " + _vm._s(filter.value) + "\n        ")]
+              )
+            }),
+            0
+          )
+        ])
       ]),
-      _vm._v("\n  " + _vm._s(_vm.card.head) + "\n  "),
+      _vm._v(" "),
       _c("table", { staticClass: "table w-full" }, [
         _c(
           "thead",

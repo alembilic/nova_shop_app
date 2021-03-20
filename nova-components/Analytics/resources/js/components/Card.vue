@@ -1,7 +1,24 @@
 <template>
   <card class="flex flex-col items-center justify-center">
-    <h1 class="text-90 font-normal text-2xl p-4">{{ card.title }}</h1>
-    {{ card.head }}
+    <div class="w-full p-4">
+      <div class="text-90 font-normal text-2xl p-4 inline">
+        {{ card.title }}
+      </div>
+      <div class="right inline float-right">
+        <select
+          @change="filter($event)"
+          class="select-box-sm ml-auto min-w-24 h-6 text-xs appearance-none bg-40 pl-2 pr-6 active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
+        >
+          <option
+            v-for="(filter, index) in card.timeFilters"
+            :key="index"
+            :value="filter.key"
+          >
+            {{ filter.value }}
+          </option>
+        </select>
+      </div>
+    </div>
     <table class="table w-full">
       <thead>
         <th v-for="(head, index) in card.heads" :key="index" class="text-left">
@@ -34,6 +51,46 @@ export default {
     // 'resourceId',
     // 'resourceName',
   ],
+
+  methods: {
+    filter(event) {
+      if (this.card.title === "Most popular products") {
+        axios
+          .get("/api/popularProducts/" + event.target.value)
+          .then((response) => (this.card = response.data));
+      }
+
+      if (this.card.title === "Most popular first order products") {
+        axios
+          .get("/api/deepDive/1/" + event.target.value)
+          .then((response) => (this.card = response.data));
+      }
+
+      if (this.card.title === "Most popular secound order products") {
+        axios
+          .get("/api/deepDive/2/" + event.target.value)
+          .then((response) => (this.card = response.data));
+      }
+
+      if (this.card.title === "Most popular third order products") {
+        axios
+          .get("/api/deepDive/3/" + event.target.value)
+          .then((response) => (this.card = response.data));
+      }
+
+      if (this.card.title === "Most popular fourd order products") {
+        axios
+          .get("/api/deepDive/4/" + event.target.value)
+          .then((response) => (this.card = response.data));
+      }
+
+      if (this.card.title === "Most popular fifth order products") {
+        axios
+          .get("/api/deepDive/5/" + event.target.value)
+          .then((response) => (this.card = response.data));
+      }
+    },
+  },
 
   mounted() {
     //

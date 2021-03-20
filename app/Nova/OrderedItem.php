@@ -46,7 +46,7 @@ class OrderedItem extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
 
-            BelongsTo::make('Order'),
+            BelongsTo::make('Order', 'order'),
             BelongsTo::make('Item'),
             Number::make('Parent item ID', 'parent_item_id')->onlyOnForms()->sortable()->min(1)->step(1),
             Text::make('Product Options', 'product_options')->onlyOnForms()->rules('required', 'max:500'),
