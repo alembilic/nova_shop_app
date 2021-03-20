@@ -3,9 +3,9 @@
 namespace App\Nova\Metrics;
 
 use App\Models\Customer;
-use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
+use App\Http\Controllers\DateTimeController;
 
 class PurchaseFrequency extends Value
 {
@@ -17,32 +17,32 @@ class PurchaseFrequency extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        $range = $request->range;
-        $timezone = $request->timezone;
-        $dates = $this->currentRange($range, $timezone);
-        $prev_dates = $this->previousRange($range, $timezone);
+        // $range = $request->range;
+        // $timezone = $request->timezone;
+        // $dates = $this->currentRange($range, $timezone);
+        // $prev_dates = $this->previousRange($range, $timezone);
 
-        $result = Customer::where(
-            'first_purchase',
-            '>',
-            $dates[0]->toDateString()
-        )->where(
-            'first_purchase',
-            '<',
-            $dates[1]->toDateString()
-        )->sum('apfr');
+        // $result = Customer::where(
+        //     'first_purchase',
+        //     '>',
+        //     $dates[0]->toDateString()
+        // )->where(
+        //     'first_purchase',
+        //     '<',
+        //     $dates[1]->toDateString()
+        // )->sum('apfr');
 
-        $prev_result = Customer::where(
-            'first_purchase',
-            '>',
-            $prev_dates[0]->toDateString()
-        )->where(
-            'first_purchase',
-            '<',
-            $prev_dates[1]->toDateString()
-        )->sum('apfr');
+        // $prev_result = Customer::where(
+        //     'first_purchase',
+        //     '>',
+        //     $prev_dates[0]->toDateString()
+        // )->where(
+        //     'first_purchase',
+        //     '<',
+        //     $prev_dates[1]->toDateString()
+        // )->sum('apfr');
 
-        return $this->result($result)->previous($prev_result);
+        return $this->sum($request, Customer::class, 'apfr', 'first_purchase');
     }
 
     /**
@@ -52,15 +52,7 @@ class PurchaseFrequency extends Value
      */
     public function ranges()
     {
-        return [
-            30 => __('30 Days'),
-            60 => __('60 Days'),
-            365 => __('365 Days'),
-            'TODAY' => __('Today'),
-            'MTD' => __('Month To Date'),
-            'QTD' => __('Quarter To Date'),
-            'YTD' => __('Year To Date'),
-        ];
+        return (new DateTimeController())->getFilters();
     }
 
     /**

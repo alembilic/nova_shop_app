@@ -20,7 +20,7 @@ abstract class Value extends RangedMetric
      *
      * @var int
      */
-    public $precision = 0;
+    public $precision = 2;
 
     /**
      * Return a value result showing the growth of an count aggregate over time.
@@ -142,6 +142,23 @@ abstract class Value extends RangedMetric
      */
     protected function previousRange($range, $timezone)
     {
+        $dates = explode(',', $range);
+
+        if (isset($dates[1])) {
+            $earlier = Carbon::parse($dates[0]);
+            $later = Carbon::parse($dates[1]);
+
+            $diff = $earlier->diffInDays($later);
+
+            $to = $earlier;
+            $from = Carbon::parse($dates[0])->subDays($diff);
+
+            return [
+                $from,
+                $to
+            ];
+        }
+
         if ($range == 'TODAY') {
             return [
                 now($timezone)->modify('yesterday')->setTime(0, 0),
@@ -197,6 +214,15 @@ abstract class Value extends RangedMetric
      */
     protected function currentRange($range, $timezone)
     {
+        $dates = explode(',', $range);
+
+        if (isset($dates[1])) {
+            return [
+                Carbon::createFromFormat('Y-m-d', $dates[0]),
+                Carbon::createFromFormat('Y-m-d', $dates[1])
+            ];
+        }
+
         if ($range == 'TODAY') {
             return [
                 today($timezone),

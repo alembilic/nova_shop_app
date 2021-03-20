@@ -5,6 +5,7 @@ namespace App\Nova\Metrics;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
 use App\Models\Order;
+use App\Http\Controllers\DateTimeController;
 
 class TotalSales extends Value
 {
@@ -16,7 +17,7 @@ class TotalSales extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->sum($request, Order::where('status', 'complete'), 'grand_total', 'created_at');
+        return $this->count($request, Order::where('status', 'complete'), 'id', 'created_at');
     }
 
     /**
@@ -26,16 +27,7 @@ class TotalSales extends Value
      */
     public function ranges()
     {
-        return [
-            30 => __('30 Days'),
-            60 => __('60 Days'),
-            365 => __('365 Days'),
-            3265 => __('3265 Days'),
-            'TODAY' => __('Today'),
-            'MTD' => __('Month To Date'),
-            'QTD' => __('Quarter To Date'),
-            'YTD' => __('Year To Date'),
-        ];
+        return (new DateTimeController())->getFilters();
     }
 
     /**

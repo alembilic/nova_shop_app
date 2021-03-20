@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
 use Acme\Analytics\Analytics;
+use App\Http\Controllers\TestController;
+use App\Nova\Dashboards\DataBreakdown;
+use App\Nova\Dashboards\DeepDive;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
@@ -62,7 +65,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             new AverageCLV,
             new PurchaseFrequency,
             new TotalSales,
-            (new Analytics)->withData()
+            (new Analytics)->withMeta((new TestController)->popularProducts())
         ];
     }
 
@@ -73,7 +76,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     protected function dashboards()
     {
-        return [];
+        return [new DataBreakdown, new DeepDive()];
     }
 
     /**

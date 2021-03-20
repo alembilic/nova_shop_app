@@ -23,7 +23,7 @@ class TestController extends Controller
         $store_query = ' and store_id = 1';
 
         $data = DB::select("
-        select store_id, max(order1.customer_firstname) as customer_firstname, min(order1.customer_lastname) as customer_lastname, min(order1.created_at) as first_purchase, sum(order1.customer_order_number) as total_items, count(order1.customer_email) as order_times, order1.customer_email, sum(order1.grand_total) as total, sum(order1.shipping_amount) as shipping, (
+        select store_id, max(order1.customer_firstname) as customer_firstname, min(order1.customer_lastname) as customer_lastname, min(order1.created_at) as first_purchase, sum(order1.total_item_count) as total_items, count(order1.customer_email) as order_times, order1.customer_email, sum(order1.grand_total) as total, sum(order1.shipping_amount) as shipping, (
             select sum(base_cost) from ordered_items where order_id in (
                  select o.id
             from orders as o
@@ -71,7 +71,7 @@ class TestController extends Controller
 
     public function popularProducts()
     {
-        $data = DB::select("
+        $db_data = DB::select("
         SELECT items.name, count(items.name) as amount, sum(orders.grand_total) total_sum 
         FROM `ordered_items` as items 
         inner join orders on items.order_id = orders.id
@@ -81,6 +81,10 @@ class TestController extends Controller
         limit 20
         ");
 
-        return $data;
+        return [
+            'title' => 'Most popular products',
+            'heads' => ['name', 'amount', 'total sum'],
+            'rows' => $db_data
+        ];
     }
 }

@@ -3,29 +3,25 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\DateTime;
-use Laravel\Nova\Fields\HasMany;
 
-class Customer extends Resource
+class DateFilter extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = \App\Models\Customer::class;
+    public static $model = \App\Models\DateFilter::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'id';
 
     /**
      * The columns that should be searched.
@@ -33,7 +29,7 @@ class Customer extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'email'
+        'id',
     ];
 
     /**
@@ -46,16 +42,9 @@ class Customer extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
-            Text::make('Name', 'name')->sortable()->rules('required', 'max:254'),
-            Text::make('Email', 'email')->sortable()->rules('required', 'email', 'max:254'),
-            HasMany::make('Orders'),
-            BelongsTo::make('Store'),
-            Number::make('Total Order Count', 'total_order_count')->onlyOnForms()->sortable()->min(1)->step(1),
-            Number::make('CLV', 'clv')->sortable()->min(1)->step(1),
-            Number::make('ACLV', 'aclv')->sortable()->min(1)->step(1),
-            Number::make('APV', 'apv')->sortable()->min(1)->step(1),
-            Number::make('APFR', 'apfr')->sortable()->min(1)->step(1),
-            DateTime::make('First Purchase', 'first_purchase')->sortable(),
+
+            Date::make('Date From', 'from')->sortable(),
+            Date::make('Date To', 'to')->sortable(),
         ];
     }
 

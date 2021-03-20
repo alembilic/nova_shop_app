@@ -24,16 +24,4 @@ class Analytics extends Card
     {
         return 'analytics';
     }
-
-    public function withData()
-    {
-        $db_data = (new TestController())->popularProducts();
-        $data = [
-            'title' => 'Most popular products',
-            'heads' => ['name', 'amount', 'total sum'],
-            'rows' => $db_data
-        ];
-
-        return $this->withMeta($data);
-    }
 }

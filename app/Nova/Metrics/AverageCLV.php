@@ -2,6 +2,7 @@
 
 namespace App\Nova\Metrics;
 
+use App\Http\Controllers\DateTimeController;
 use App\Models\Customer;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
@@ -26,15 +27,7 @@ class AverageCLV extends Value
      */
     public function ranges()
     {
-        return [
-            30 => __('30 Days'),
-            60 => __('60 Days'),
-            365 => __('365 Days'),
-            'TODAY' => __('Today'),
-            'MTD' => __('Month To Date'),
-            'QTD' => __('Quarter To Date'),
-            'YTD' => __('Year To Date'),
-        ];
+        return (new DateTimeController())->getFilters();
     }
 
     /**
