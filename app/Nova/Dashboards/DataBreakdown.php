@@ -19,24 +19,24 @@ class DataBreakdown extends Dashboard
         $total = Customer::count();
 
         $data = array(
-            DB::select("select sum(clv) as five from (select * from customers order by clv desc limit " . round($total * 0.05) . ") as f"),
-            DB::select("select sum(clv) as five from (select * from customers order by clv desc limit " . round($total * 0.10) . ") as f"),
-            DB::select("select sum(clv) as five from (select * from customers order by clv desc limit " . round($total * 0.15) . ") as f"),
-            DB::select("select sum(clv) as five from (select * from customers order by clv desc limit " . round($total * 0.20) . ") as f"),
-            DB::select("select sum(clv) as five from (select * from customers order by clv desc limit " . round($total * 0.25) . ") as f")
+            DB::select("select sum(clv) / " . $total * 0.05 . " as five from (select * from customers order by clv desc limit " . round($total * 0.05) . ") as f"),
+            DB::select("select sum(clv) / " . $total * 0.10 . " as five from (select * from customers order by clv desc limit " . round($total * 0.10) . ") as f"),
+            DB::select("select sum(clv) / " . $total * 0.15 . " as five from (select * from customers order by clv desc limit " . round($total * 0.15) . ") as f"),
+            DB::select("select sum(clv) / " . $total * 0.20 . " as five from (select * from customers order by clv desc limit " . round($total * 0.20) . ") as f"),
+            DB::select("select sum(clv) / " . $total * 0.25 . " as five from (select * from customers order by clv desc limit " . round($total * 0.25) . ") as f")
         );
 
         $data2 = array(
-            DB::select("select sum(apfr) as five from (select * from customers order by apfr desc limit " . round($total * 0.05) . ") as f"),
-            DB::select("select sum(apfr) as five from (select * from customers order by apfr desc limit " . round($total * 0.10) . ") as f"),
-            DB::select("select sum(apfr) as five from (select * from customers order by apfr desc limit " . round($total * 0.15) . ") as f"),
-            DB::select("select sum(apfr) as five from (select * from customers order by apfr desc limit " . round($total * 0.20) . ") as f"),
-            DB::select("select sum(apfr) as five from (select * from customers order by apfr desc limit " . round($total * 0.25) . ") as f")
+            DB::select("select sum(apfr) / " . $total * 0.05 . " as five from (select * from customers order by apfr desc limit " . round($total * 0.05) . ") as f"),
+            DB::select("select sum(apfr) / " . $total * 0.10 . " as five from (select * from customers order by apfr desc limit " . round($total * 0.10) . ") as f"),
+            DB::select("select sum(apfr) / " . $total * 0.15 . " as five from (select * from customers order by apfr desc limit " . round($total * 0.15) . ") as f"),
+            DB::select("select sum(apfr) / " . $total * 0.20 . " as five from (select * from customers order by apfr desc limit " . round($total * 0.20) . ") as f"),
+            DB::select("select sum(apfr) / " . $total * 0.25 . " as five from (select * from customers order by apfr desc limit " . round($total * 0.25) . ") as f")
         );
 
         return [
             (new AreaChart())
-                ->title('CLV for top Customers')
+                ->title('Average CLV for top Customers')
                 ->animations([
                     'enabled' => true,
                     'easing' => 'easeinout',
@@ -54,7 +54,7 @@ class DataBreakdown extends Dashboard
                 ])
                 ->width('full'),
             (new AreaChart())
-                ->title('APFR for top Customers')
+                ->title('Average APFR for top Customers')
                 ->animations([
                     'enabled' => true,
                     'easing' => 'easeinout',
@@ -62,7 +62,7 @@ class DataBreakdown extends Dashboard
                 ->series(array([
                     'barPercentage' => 0.5,
                     'label' => 'APFR',
-                    'backgroundColor' => '#f7a35c',
+                    'backgroundColor' => '#90ed7d',
                     'data' => [round($data2[0][0]->five, 4), round($data2[1][0]->five, 4), round($data2[2][0]->five, 4), round($data2[3][0]->five, 4), round($data2[4][0]->five, 4)],
                 ]))
                 ->options([

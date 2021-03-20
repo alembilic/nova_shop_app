@@ -12,7 +12,7 @@ class Analyze extends Command
      *
      * @var string
      */
-    protected $signature = 'analyze:data';
+    protected $signature = 'analyze:data {store?}';
 
     /**
      * The console command description.
@@ -38,8 +38,10 @@ class Analyze extends Command
      */
     public function handle()
     {
+        $store_id = $this->argument('store');
+
         $controller = new TestController();
-        $controller->test();
+        $controller->test($store_id);
 
         $this->info('The command was successful!');
     }
