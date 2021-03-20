@@ -3,26 +3,27 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Number;
 
-class Item extends Resource
+class OrderedItem extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = \App\Models\Item::class;
+    public static $model = \App\Models\OrderedItem::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'id';
 
     /**
      * The columns that should be searched.
@@ -30,7 +31,7 @@ class Item extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'sku'
+        'id',
     ];
 
     /**
@@ -44,13 +45,20 @@ class Item extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
 
-            Number::make('Order ID', 'order_id')->onlyOnForms()->sortable()->rules('required')->min(1)->step(1),
-            Number::make('Store ID', 'store_id')->onlyOnForms()->sortable()->rules('required')->min(1)->step(1),
-            Text::make('Name', 'name')->sortable()->rules('required', 'max:254'),
-            Text::make('SKU', 'sku')->sortable()->rules('max:254'),
-            Number::make('Price', 'price')->sortable()->rules('required')->min(1)->step(0.01),
-            Number::make('Cost', 'cost')->sortable()->rules('required')->min(1)->step(0.01),
-            Text::make('Manufacture', 'manufacture')->sortable()->rules('max:254'),
+            BelongsTo::make('Order'),
+            Number::make('Parent item ID', 'parent_item_id')->onlyOnForms()->sortable()->min(1)->step(1),
+            Text::make('Product Options', 'product_options')->onlyOnForms()->rules('required', 'max:500'),
+            Number::make('Weight', 'weight')->sortable()->min(0)->step(0.01),
+            Text::make('SKU', 'sku')->rules('max:255'),
+            Text::make('Item name', 'name')->rules('required', 'max:255'),
+            Number::make('Base cost', 'base_cost')->sortable()->rules('required')->min(0)->step(0.01),
+            Number::make('Price', 'price')->sortable()->rules('required')->min(0)->step(0.01),
+            Number::make('Original price', 'original_price')->rules('required')->sortable()->min(0)->step(0.01),
+            Number::make('Discount amount', 'discount_amount')->sortable()->min(0)->step(0.01),
+            Number::make('Quantity shiped', 'qty_shipped')->sortable()->min(1)->step(1),
+
+
+            // $table->integer('order_id');
         ];
     }
 

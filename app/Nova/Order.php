@@ -4,6 +4,7 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Select;
@@ -53,6 +54,7 @@ class Order extends Resource
             ])->rules('required'),
 
             BelongsTo::make('Customer'),
+            HasMany::make('Ordered Items', 'order_items'),
             Number::make('Order ID', 'order_id')->onlyOnForms()->sortable()->rules('required')->min(1)->step(1),
             Number::make('Store ID', 'store_id')->onlyOnForms()->sortable()->rules('required')->min(1)->step(1),
             Text::make('Customer First Name', 'customer_firstname')->sortable()->rules('required', 'max:254'),
