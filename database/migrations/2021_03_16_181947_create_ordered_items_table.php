@@ -16,6 +16,7 @@ class CreateOrderedItemsTable extends Migration
         Schema::create('ordered_items', function (Blueprint $table) {
             $table->id();
             $table->integer('order_id');
+            $table->integer('item_id');
             $table->integer('parent_item_id')->nullable();
             $table->longText('product_options')->nullable();
             $table->float('weight')->nullable();

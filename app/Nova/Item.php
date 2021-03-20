@@ -3,6 +3,8 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Fields\Text;
@@ -44,8 +46,8 @@ class Item extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
 
-            Number::make('Order ID', 'order_id')->onlyOnForms()->sortable()->rules('required')->min(1)->step(1),
-            Number::make('Store ID', 'store_id')->onlyOnForms()->sortable()->rules('required')->min(1)->step(1),
+            BelongsTo::make('Store'),
+            HasOne::make('Ordered Item', 'ordered_item'),
             Text::make('Name', 'name')->sortable()->rules('required', 'max:254'),
             Text::make('SKU', 'sku')->sortable()->rules('max:254'),
             Number::make('Price', 'price')->sortable()->rules('required')->min(1)->step(0.01),

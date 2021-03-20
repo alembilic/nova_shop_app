@@ -4,6 +4,7 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Fields\Text;
@@ -46,6 +47,7 @@ class OrderedItem extends Resource
             ID::make(__('ID'), 'id')->sortable(),
 
             BelongsTo::make('Order'),
+            BelongsTo::make('Item'),
             Number::make('Parent item ID', 'parent_item_id')->onlyOnForms()->sortable()->min(1)->step(1),
             Text::make('Product Options', 'product_options')->onlyOnForms()->rules('required', 'max:500'),
             Number::make('Weight', 'weight')->sortable()->min(0)->step(0.01),

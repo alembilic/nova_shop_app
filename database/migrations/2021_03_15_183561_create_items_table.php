@@ -15,12 +15,12 @@ class CreateItemsTable extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->string('order_id');
-            $table->string('store_id');
+            $table->integer('order_id')->nullable();
+            $table->integer('store_id');
             $table->string('name');
             $table->string('sku')->nullable();
-            $table->string('price');
-            $table->string('cost');
+            $table->float('price');
+            $table->float('cost');
             $table->string('manufacture');
             $table->timestamps();
         });

@@ -45,6 +45,7 @@ class Store extends Resource
             Number::make('ID', 'id')->sortable()->rules('required')->min(1)->step(1),
 
             HasMany::make('Customers'),
+            HasMany::make('Items'),
             Text::make('Name', 'name')->sortable()->rules('required', 'max:254'),
             Text::make('Url', 'url')->sortable()->rules('required', 'max:254'),
         ];
