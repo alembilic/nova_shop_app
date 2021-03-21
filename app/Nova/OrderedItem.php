@@ -4,9 +4,7 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Number;
 
@@ -24,7 +22,7 @@ class OrderedItem extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'name';
 
     /**
      * The columns that should be searched.
@@ -32,7 +30,7 @@ class OrderedItem extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'id', 'sku', 'name'
     ];
 
     /**

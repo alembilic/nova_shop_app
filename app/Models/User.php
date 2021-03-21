@@ -40,4 +40,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function stores()
+    {
+        return $this->hasManyThrough(
+            Store::class,
+            UserStoresPivot::class,
+            'user_id', // Foreign key on users table...
+            'id', // Foreign key on posts table...
+            'id', // Local key on countries table...
+            'store_id' // Local key on users table...
+        );
+    }
 }

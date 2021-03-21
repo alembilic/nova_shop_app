@@ -4,9 +4,9 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\HasMany;
-use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Fields\HasManyThrough;
+use Laravel\Nova\Fields\ID;
 
 class Store extends Resource
 {
@@ -42,12 +42,13 @@ class Store extends Resource
     public function fields(Request $request)
     {
         return [
-            Number::make('ID', 'id')->sortable()->rules('required')->min(1)->step(1),
+            ID::make()->sortable(),
 
             HasMany::make('Customers'),
             HasMany::make('Items'),
             Text::make('Name', 'name')->sortable()->rules('required', 'max:254'),
             Text::make('Url', 'url')->sortable()->rules('required', 'max:254'),
+            HasManyThrough::make('Users', 'users')
         ];
     }
 
