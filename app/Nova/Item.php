@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Models\UserStoresPivot;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\HasOne;
@@ -98,5 +99,12 @@ class Item extends Resource
     public function actions(Request $request)
     {
         return [];
+    }
+
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        if (auth()->user()->role == 'admin') return $query;
+
+        return $query->whereIn('store_id', UserStoresPivot::where('user_id', $request->user()->id)->get('store_id'));
     }
 }

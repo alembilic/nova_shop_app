@@ -7,10 +7,12 @@ use App\Models\Order;
 use App\Models\OrderedItem;
 use App\Models\Store;
 use App\Models\User;
+use App\Models\UserStoresPivot;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use DateTime;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class TestController extends Controller
 {
@@ -79,21 +81,33 @@ class TestController extends Controller
         return 0;
     }
 
-    public function popularProducts($filter = null)
+    public function popularProducts($filter = null, $user_id = null)
     {
+        if ($user_id == null) $user_id = auth()->user()->id;
+        $user = User::find($user_id);
+        $storeQuery = '';
+        if ($user->role != 'admin') {
+            $stores = UserStoresPivot::where('user_id', $user_id)->get('store_id');
+            $storeQuery = ' and store_id in (';
+            foreach ($stores as $store) $storeQuery .= $store->store_id . ',';
+
+            $storeQuery = substr($storeQuery, 0, -1);
+            $storeQuery .= ') ';
+        }
+
         $whereDate = '';
         if (isset($filter)) {
             $ranges = $this->getRange(
                 $filter
             );
-            $whereDate = " and items.created_at between '" . $ranges[0]->format('Y-m-d h:m:s') . "' and '" . $ranges[1]->format('Y-m-d h:m:s') . "'";
+            $whereDate = " and items.created_at between '" . $ranges[0]->format('Y-m-d h:m:s') . "' and '" . $ranges[1]->format('Y-m-d h:m:s') . "' ";
         }
 
         $db_data = DB::select("
         SELECT items.name, count(items.name) as amount, sum(orders.grand_total) total_sum 
         FROM `ordered_items` as items 
         inner join orders on items.order_id = orders.id
-        where orders.status = 'complete' " . $whereDate . " 
+        where orders.status = 'complete' " . $whereDate . $storeQuery . " 
         group by items.name
         order by amount desc
         limit 20
@@ -109,7 +123,8 @@ class TestController extends Controller
             'title' => 'Most popular products',
             'heads' => ['name', 'amount', 'total sum'],
             'rows' => $db_data,
-            'timeFilters' => $filters
+            'timeFilters' => $filters,
+            'user_id' => $user_id
         ];
     }
 

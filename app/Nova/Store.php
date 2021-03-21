@@ -2,11 +2,13 @@
 
 namespace App\Nova;
 
+use App\Models\UserStoresPivot;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\HasManyThrough;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Store extends Resource
 {
@@ -94,5 +96,12 @@ class Store extends Resource
     public function actions(Request $request)
     {
         return [];
+    }
+
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        if (auth()->user()->role == 'admin') return $query;
+
+        return $query->whereIn('id', UserStoresPivot::where('user_id', $request->user()->id)->get('store_id'));
     }
 }

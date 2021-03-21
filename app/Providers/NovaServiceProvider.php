@@ -61,11 +61,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     protected function cards()
     {
+        $user_id = auth()->user()->id;
         return [
             new AverageCLV,
             new PurchaseFrequency,
             new TotalSales,
-            (new Analytics)->withMeta((new TestController)->popularProducts(1, 'YTD'))
+            (new Analytics)->withMeta((new TestController)->popularProducts('YTD', $user_id))
         ];
     }
 

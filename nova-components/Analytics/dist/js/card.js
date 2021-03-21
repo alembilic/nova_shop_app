@@ -293,37 +293,37 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       var _this = this;
 
       if (this.card.title === "Most popular products") {
-        axios.get("/api/popularProducts/" + event.target.value).then(function (response) {
+        axios.get("/api/popularProducts/" + event.target.value + "/" + this.card.user_id).then(function (response) {
           return _this.card = response.data;
         });
       }
 
       if (this.card.title === "Most popular first order products") {
-        axios.get("/api/deepDive/1/" + event.target.value).then(function (response) {
+        axios.get("/api/deepDive/1/" + event.target.value + "/" + this.card.user_id).then(function (response) {
           return _this.card = response.data;
         });
       }
 
       if (this.card.title === "Most popular secound order products") {
-        axios.get("/api/deepDive/2/" + event.target.value).then(function (response) {
+        axios.get("/api/deepDive/2/" + event.target.value + "/" + this.card.user_id).then(function (response) {
           return _this.card = response.data;
         });
       }
 
       if (this.card.title === "Most popular third order products") {
-        axios.get("/api/deepDive/3/" + event.target.value).then(function (response) {
+        axios.get("/api/deepDive/3/" + event.target.value + "/" + this.card.user_id).then(function (response) {
           return _this.card = response.data;
         });
       }
 
       if (this.card.title === "Most popular fourd order products") {
-        axios.get("/api/deepDive/4/" + event.target.value).then(function (response) {
+        axios.get("/api/deepDive/4/" + event.target.value + "/" + this.card.user_id).then(function (response) {
           return _this.card = response.data;
         });
       }
 
       if (this.card.title === "Most popular fifth order products") {
-        axios.get("/api/deepDive/5/" + event.target.value).then(function (response) {
+        axios.get("/api/deepDive/5/" + event.target.value + "/" + this.card.user_id).then(function (response) {
           return _this.card = response.data;
         });
       }

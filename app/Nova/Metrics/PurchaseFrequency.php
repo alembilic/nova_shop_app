@@ -6,6 +6,7 @@ use App\Models\Customer;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
 use App\Http\Controllers\DateTimeController;
+use App\Models\UserStoresPivot;
 
 class PurchaseFrequency extends Value
 {
@@ -17,7 +18,11 @@ class PurchaseFrequency extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->sum($request, Customer::class, 'apfr', 'first_purchase');
+        if (auth()->user()->role == 'admin')
+            return $this->sum($request, Customer::class, 'apfr', 'first_purchase');
+
+        $stores = UserStoresPivot::where('user_id', $request->user()->id)->get('store_id');
+        return $this->sum($request, Customer::whereIn('store_id', $stores), 'apfr', 'first_purchase');
     }
 
     /**

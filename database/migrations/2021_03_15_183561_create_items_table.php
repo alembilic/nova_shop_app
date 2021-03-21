@@ -21,7 +21,7 @@ class CreateItemsTable extends Migration
             $table->string('sku')->nullable();
             $table->float('price');
             $table->float('cost');
-            $table->string('manufacture');
+            $table->string('manufacture')->nullable();
             $table->timestamps();
         });
     }

@@ -56,37 +56,52 @@ export default {
     filter(event) {
       if (this.card.title === "Most popular products") {
         axios
-          .get("/api/popularProducts/" + event.target.value)
+          .get(
+            "/api/popularProducts/" +
+              event.target.value +
+              "/" +
+              this.card.user_id
+          )
           .then((response) => (this.card = response.data));
       }
 
       if (this.card.title === "Most popular first order products") {
         axios
-          .get("/api/deepDive/1/" + event.target.value)
+          .get(
+            "/api/deepDive/1/" + event.target.value + "/" + this.card.user_id
+          )
           .then((response) => (this.card = response.data));
       }
 
       if (this.card.title === "Most popular secound order products") {
         axios
-          .get("/api/deepDive/2/" + event.target.value)
+          .get(
+            "/api/deepDive/2/" + event.target.value + "/" + this.card.user_id
+          )
           .then((response) => (this.card = response.data));
       }
 
       if (this.card.title === "Most popular third order products") {
         axios
-          .get("/api/deepDive/3/" + event.target.value)
+          .get(
+            "/api/deepDive/3/" + event.target.value + "/" + this.card.user_id
+          )
           .then((response) => (this.card = response.data));
       }
 
       if (this.card.title === "Most popular fourd order products") {
         axios
-          .get("/api/deepDive/4/" + event.target.value)
+          .get(
+            "/api/deepDive/4/" + event.target.value + "/" + this.card.user_id
+          )
           .then((response) => (this.card = response.data));
       }
 
       if (this.card.title === "Most popular fifth order products") {
         axios
-          .get("/api/deepDive/5/" + event.target.value)
+          .get(
+            "/api/deepDive/5/" + event.target.value + "/" + this.card.user_id
+          )
           .then((response) => (this.card = response.data));
       }
     },

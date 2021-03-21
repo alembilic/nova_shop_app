@@ -18,7 +18,7 @@ class CreateCustomersTable extends Migration
             $table->string('name');
             $table->string('email');
             $table->string('store_id');
-            $table->integer('total_order_count');
+            $table->integer('total_order_count')->nullable();
             $table->float('clv')->nullable();
             $table->float('aclv')->nullable();
             $table->float('apv')->nullable();

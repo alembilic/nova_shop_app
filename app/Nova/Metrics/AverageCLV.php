@@ -4,6 +4,7 @@ namespace App\Nova\Metrics;
 
 use App\Http\Controllers\DateTimeController;
 use App\Models\Customer;
+use App\Models\UserStoresPivot;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
 
@@ -17,7 +18,11 @@ class AverageCLV extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->average($request, Customer::class, 'clv', 'first_purchase');
+        if (auth()->user()->role == 'admin')
+            return $this->average($request, Customer::class, 'clv', 'first_purchase');
+
+        $stores = UserStoresPivot::where('user_id', $request->user()->id)->get('store_id');
+        return $this->average($request, Customer::whereIn('store_id', $stores), 'clv', 'first_purchase');
     }
 
     /**

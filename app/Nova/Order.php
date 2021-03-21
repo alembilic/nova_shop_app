@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Models\UserStoresPivot;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\HasMany;
@@ -54,9 +55,9 @@ class Order extends Resource
             ])->rules('required'),
 
             BelongsTo::make('Customer'),
+            BelongsTo::make('Store', 'store'),
             HasMany::make('Ordered Items', 'order_items'),
             Number::make('Order ID', 'order_id')->onlyOnForms()->sortable()->rules('required')->min(1)->step(1),
-            Number::make('Store ID', 'store_id')->onlyOnForms()->sortable()->rules('required')->min(1)->step(1),
             Text::make('Customer First Name', 'customer_firstname')->sortable()->rules('required', 'max:254'),
             Text::make('Customer Last Name', 'customer_lastname')->sortable()->rules('required', 'max:254'),
             Number::make('Grand Total', 'grand_total')->sortable()->rules('required')->min(1)->step(0.01),
@@ -108,5 +109,12 @@ class Order extends Resource
     public function actions(Request $request)
     {
         return [];
+    }
+
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        if (auth()->user()->role == 'admin') return $query;
+
+        return $query->whereIn('store_id', UserStoresPivot::where('user_id', $request->user()->id)->get('store_id'));
     }
 }

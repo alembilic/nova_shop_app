@@ -19,14 +19,9 @@ class StorePolicy
         //
     }
 
-    public function viewAny()
-    {
-        return auth()->user()->role == 'admin';
-    }
-
     public function view()
     {
-        return auth()->user()->role == 'admin';
+        return true;
     }
 
     public function update()

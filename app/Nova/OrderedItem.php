@@ -2,11 +2,14 @@
 
 namespace App\Nova;
 
+use App\Models\OrderedItem as ModelsOrderedItem;
+use App\Models\UserStoresPivot;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class OrderedItem extends Resource
 {
@@ -104,5 +107,15 @@ class OrderedItem extends Resource
     public function actions(Request $request)
     {
         return [];
+    }
+
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        if (auth()->user()->role == 'admin') return $query;
+
+        $stores = UserStoresPivot::where('user_id', $request->user()->id)->get('store_id');
+        return $query->with(['order' => function ($query) use ($stores) {
+            $query->whereIn('store_id', $stores);
+        }])->get('id');
     }
 }

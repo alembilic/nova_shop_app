@@ -6,6 +6,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
 use App\Models\Order;
 use App\Http\Controllers\DateTimeController;
+use App\Models\UserStoresPivot;
 
 class TotalSales extends Value
 {
@@ -17,7 +18,11 @@ class TotalSales extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->count($request, Order::where('status', 'complete'), 'id', 'created_at');
+        if (auth()->user()->role == 'admin')
+            return $this->count($request, Order::where('status', 'complete'), 'id', 'created_at');
+
+        $stores = UserStoresPivot::where('user_id', $request->user()->id)->get('store_id');
+        return $this->count($request, Order::where('status', 'complete')->whereIn('store_id', $stores), 'id', 'created_at');
     }
 
     /**

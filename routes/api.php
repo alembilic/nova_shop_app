@@ -20,5 +20,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/popularProducts/{filter}', [TestController::class, 'popularProducts']);
-Route::get('/deepDive/{n}/{filter}', [DeepDiveDashController::class, 'byOrder']);
+Route::get('/popularProducts/{filter}/{user_id}', [TestController::class, 'popularProducts']);
+Route::get('/deepDive/{n}/{filter}/{user_id}', [DeepDiveDashController::class, 'byOrder']);
