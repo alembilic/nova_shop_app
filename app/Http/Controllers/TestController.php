@@ -18,6 +18,7 @@ class TestController extends Controller
 {
     public function test($store_id = 0)
     {
+        ini_set('max_execution_time', 3000);
         //clearing DB
         $clear = Customer::query()->delete();
         if ($clear) dump("Database cleared");
@@ -31,53 +32,60 @@ class TestController extends Controller
         foreach ($stores as $store) {
             $store_query = ' and store_id = ' . $store->store_id;
 
-            //selecting data
-            $data = DB::select("
-        select store_id, max(order1.customer_firstname) as customer_firstname, min(order1.customer_lastname) as customer_lastname, min(order1.created_at) as first_purchase, sum(order1.total_item_count) as total_items, count(order1.customer_email) as order_times, order1.customer_email, sum(order1.grand_total) as total, sum(order1.shipping_amount) as shipping, (
-            select sum(base_cost) from ordered_items where order_id in (
-                 select o.id
-            from orders as o
-            inner join
-            (    SELECT customer_email
-                FROM orders
-                 where customer_email = order1.customer_email and status= 'complete'
-                GROUP BY orders.customer_email
-                HAVING count(id) > 1
-            ) as o2 on o2.customer_email = o.customer_email
-            )
-            ) as cost  FROM orders as order1
-            where status= '" . $status . "'" . $store_query . "
-            GROUP by customer_email");
-            if ($data) dump("Analyzed: " . count($data) . " customers");
+            $totalOrders = DB::select("select count(t2.customer_email) as count from(
+                 select customer_email
+                FROM orders as order1
+                where status= '" . $status . "'" . $store_query . "
+                GROUP by customer_email) as t2");
+            $totalOrders = $totalOrders[0]->count;
+            if ($stores) dump("Found: " . $totalOrders . " orders");
 
-            //processing data
-            $customers = [];
-            foreach ($data as $one) {
-                $clv = $one->total - $one->shipping - $one->cost;
-                $datetime1 = new DateTime($one->first_purchase);
-                $datetime2 = new DateTime();
-                $interval = $datetime1->diff($datetime2);
+            $n = 500;
+            $inserted = 0;
+            for ($i = 0; $i <= $totalOrders; $i += $n) {
 
-                array_push($customers, array(
-                    'email' => $one->customer_email,
-                    'name' => $one->customer_firstname . ' ' . $one->customer_lastname,
-                    'clv' => $clv,
-                    'aclv' => round($clv / $one->order_times, 2),
-                    'apfr' => round($one->order_times / $interval->format('%a'), 4),
-                    'first_purchase' => $one->first_purchase,
-                    'total_order_count' => $one->order_times,
-                    'apv' => round($clv / $one->order_times, 2),
-                    'store_id' => $one->store_id,
-                    'created_at' => $datetime2,
-                    'updated_at' => $datetime2
-                ));
+                //selecting data
+                $data = DB::select("
+                select store_id, max(order1.customer_firstname) as customer_firstname, min(order1.customer_lastname) as customer_lastname, min(order1.created_at) as first_purchase, sum(order1.total_item_count) as total_items, count(order1.customer_email) as order_times, order1.customer_email, sum(order1.grand_total) as total, sum(order1.shipping_amount) as shipping, (
+                    0
+                ) as cost  FROM orders as order1
+                where status= '" . $status . "'" . $store_query . "
+                GROUP by customer_email
+                LIMIT " . $n . " 
+                OFFSET " . $i . " 
+                ");
+
+                //processing data
+                $customers = [];
+                foreach ($data as $one) {
+                    $clv = $one->total - $one->shipping - $one->cost;
+                    $datetime1 = new DateTime($one->first_purchase);
+                    $datetime2 = new DateTime();
+                    $interval = $datetime1->diff($datetime2);
+
+                    array_push($customers, array(
+                        'email' => $one->customer_email,
+                        'name' => $one->customer_firstname . ' ' . $one->customer_lastname,
+                        'clv' => $clv,
+                        'aclv' => round($clv / $one->order_times, 2),
+                        'apfr' => round($one->order_times / $interval->format('%a'), 4),
+                        'first_purchase' => $one->first_purchase,
+                        'total_order_count' => $one->order_times,
+                        'apv' => round($clv / $one->order_times, 2),
+                        'store_id' => $one->store_id,
+                        'created_at' => $datetime2,
+                        'updated_at' => $datetime2
+                    ));
+                }
+
+                //inserting data
+                $insert_customer_data = Customer::insert($customers);
+                $inserted += count($customers);
+                if ($insert_customer_data) dump("Added: " . $inserted . " customers of " . $totalOrders);
             }
-
-            //inserting data
-            $insert_customer_data = Customer::insert($customers);
-            if ($insert_customer_data) dump("Added: " . count($customers) . " customers");
         }
 
+        ini_set('max_execution_time', 150);
         return 0;
     }
 
