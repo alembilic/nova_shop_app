@@ -54,4 +54,9 @@ class AverageCLV extends Value
     {
         return 'average-c-l-v';
     }
+
+    public function name()
+    {
+        return 'Average Order Value';
+    }
 }

@@ -56,7 +56,7 @@ class Order extends Resource
 
             BelongsTo::make('Customer'),
             BelongsTo::make('Store', 'store'),
-            HasMany::make('Ordered Items', 'order_items'),
+            HasMany::make('Items', 'order_items'),
             Number::make('Order ID', 'order_id')->onlyOnForms()->sortable()->rules('required')->min(1)->step(1),
             Text::make('Customer First Name', 'customer_firstname')->sortable()->rules('required', 'max:254'),
             Text::make('Customer Last Name', 'customer_lastname')->sortable()->rules('required', 'max:254'),

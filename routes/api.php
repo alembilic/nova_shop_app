@@ -3,7 +3,7 @@
 use App\Http\Controllers\DeepDiveDashController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TestController;
+use App\Http\Controllers\AnalyzeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,5 +20,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/popularProducts/{filter}/{user_id}', [TestController::class, 'popularProducts']);
+Route::get('/popularProducts/{filter}/{user_id}', [AnalyzeController::class, 'popularProducts']);
 Route::get('/deepDive/{n}/{filter}/{user_id}', [DeepDiveDashController::class, 'byOrder']);

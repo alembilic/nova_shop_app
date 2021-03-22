@@ -4,21 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Order;
-use App\Models\OrderedItem;
-use App\Models\Store;
 use App\Models\User;
 use App\Models\UserStoresPivot;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use DateTime;
-use Laravel\Nova\Http\Requests\NovaRequest;
 
-class TestController extends Controller
+class AnalyzeController extends Controller
 {
-    public function test($store_id = 0)
+    public function analyze($store_id = 0)
     {
-        ini_set('max_execution_time', 3000);
+        ini_set('max_execution_time', 9000);
         //clearing DB
         $clear = Customer::query()->delete();
         if ($clear) dump("Database cleared");
@@ -32,27 +28,27 @@ class TestController extends Controller
         foreach ($stores as $store) {
             $store_query = ' and store_id = ' . $store->store_id;
 
-            $totalOrders = DB::select("select count(t2.customer_email) as count from(
-                 select customer_email
+            $orderEmails = DB::select("
+                select customer_email
                 FROM orders as order1
                 where status= '" . $status . "'" . $store_query . "
-                GROUP by customer_email) as t2");
-            $totalOrders = $totalOrders[0]->count;
-            if ($stores) dump("Found: " . $totalOrders . " orders");
+                GROUP by customer_email");
+            $totalOrders = count($orderEmails);
+            if ($stores) dump("Found: " . $totalOrders . " customers");
 
-            $n = 500;
-            $inserted = 0;
-            for ($i = 0; $i <= $totalOrders; $i += $n) {
+            for ($i = 0; $i < $totalOrders; $i++) {
 
                 //selecting data
                 $data = DB::select("
-                select store_id, max(order1.customer_firstname) as customer_firstname, min(order1.customer_lastname) as customer_lastname, min(order1.created_at) as first_purchase, sum(order1.total_item_count) as total_items, count(order1.customer_email) as order_times, order1.customer_email, sum(order1.grand_total) as total, sum(order1.shipping_amount) as shipping, (
-                    0
-                ) as cost  FROM orders as order1
-                where status= '" . $status . "'" . $store_query . "
+                select store_id, max(order1.customer_firstname) as customer_firstname, min(order1.customer_lastname) as customer_lastname, min(order1.created_at) as first_purchase, sum(order1.total_item_count) as total_items, count(order1.customer_email) as order_times, order1.customer_email, sum(order1.grand_total) as total, sum(order1.shipping_amount) as shipping,
+                (
+                    SELECT sum(cost) as total_cost from items 
+                    inner join orders as o23 on o23.order_id = items.order_id
+                    WHERE o23.customer_email = order1.customer_email and o23.status= '" . $status . "'
+                ) as cost 
+                FROM orders as order1
+                where  status= '" . $status . "'" . $store_query . " and customer_email ='" . $orderEmails[$i]->customer_email . "' 
                 GROUP by customer_email
-                LIMIT " . $n . " 
-                OFFSET " . $i . " 
                 ");
 
                 //processing data
@@ -80,8 +76,7 @@ class TestController extends Controller
 
                 //inserting data
                 $insert_customer_data = Customer::insert($customers);
-                $inserted += count($customers);
-                if ($insert_customer_data) dump("Added: " . $inserted . " customers of " . $totalOrders);
+                if ($insert_customer_data and $i % 100 == 0) dump("Added: " . $i . " customers of " . $totalOrders);
             }
         }
 
@@ -104,7 +99,7 @@ class TestController extends Controller
         }
 
         $whereDate = '';
-        if (isset($filter)) {
+        if (isset($filter) and $filter != 'ALL') {
             $ranges = $this->getRange(
                 $filter
             );
@@ -113,8 +108,8 @@ class TestController extends Controller
 
         $db_data = DB::select("
         SELECT items.name, count(items.name) as amount, sum(orders.grand_total) total_sum 
-        FROM `ordered_items` as items 
-        inner join orders on items.order_id = orders.id
+        FROM items
+        inner join orders on items.order_id = orders.order_id
         where orders.status = 'complete' " . $whereDate . $storeQuery . " 
         group by items.name
         order by amount desc

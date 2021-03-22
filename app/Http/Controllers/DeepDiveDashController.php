@@ -27,8 +27,8 @@ class DeepDiveDashController extends Controller
         }
 
         $whereDate = '';
-        if (isset($filter)) {
-            $ranges = (new TestController())->getRange(
+        if (isset($filter) and $filter != 'ALL') {
+            $ranges = (new AnalyzeController())->getRange(
                 $filter
             );
             $whereDate = " and items.created_at between '" . $ranges[0]->format('Y-m-d h:m:s') . "' and '" . $ranges[1]->format('Y-m-d h:m:s') . "' ";
@@ -36,8 +36,8 @@ class DeepDiveDashController extends Controller
 
         $db_data = DB::select("
         SELECT items.name, count(items.name) as amount, sum(orders.grand_total) total_sum 
-        FROM `ordered_items` as items 
-        inner join orders on items.order_id = orders.id
+        FROM items as items 
+        inner join orders on items.order_id = orders.order_id
         where orders.status = 'complete' and orders.customer_order_number = " . $n . $whereDate . $storeQuery . " 
         group by items.name
         order by amount desc, total_sum desc

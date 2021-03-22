@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
 use Acme\Analytics\Analytics;
-use App\Http\Controllers\TestController;
+use App\Http\Controllers\AnalyzeController;
 use App\Nova\Dashboards\DataBreakdown;
 use App\Nova\Dashboards\DeepDive;
 
@@ -66,7 +66,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             new AverageCLV,
             new PurchaseFrequency,
             new TotalSales,
-            (new Analytics)->withMeta((new TestController)->popularProducts('YTD', $user_id))
+            (new Analytics)->withMeta((new AnalyzeController)->popularProducts('YTD', $user_id))
         ];
     }
 

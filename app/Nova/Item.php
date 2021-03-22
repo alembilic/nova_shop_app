@@ -48,7 +48,8 @@ class Item extends Resource
             ID::make(__('ID'), 'id')->sortable(),
 
             BelongsTo::make('Store'),
-            HasOne::make('Ordered Item', 'ordered_item'),
+            BelongsTo::make('Order', 'order'),
+            // HasOne::make('Ordered Item', 'ordered_item'),
             Text::make('Name', 'name')->sortable()->rules('required', 'max:254'),
             Text::make('SKU', 'sku')->sortable()->rules('max:254'),
             Number::make('Price', 'price')->sortable()->rules('required')->min(1)->step(0.01),

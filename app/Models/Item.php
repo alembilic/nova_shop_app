@@ -16,8 +16,13 @@ class Item extends Model
         return $this->belongsTo(Store::class);
     }
 
+    public function order()
+    {
+        return $this->hasOne(Order::class, 'order_id', 'order_id');
+    }
+
     public function ordered_item()
     {
-        return $this->hasOne(OrderedItem::class);
+        return $this->hasOne(OrderedItem::class, 'order_id', 'order_id');
     }
 }

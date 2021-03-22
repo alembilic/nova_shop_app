@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Http\Controllers\TestController;
+use App\Http\Controllers\AnalyzeController;
 
 class Analyze extends Command
 {
@@ -40,8 +40,8 @@ class Analyze extends Command
     {
         $store_id = $this->argument('store');
 
-        $controller = new TestController();
-        $controller->test($store_id);
+        $controller = new AnalyzeController();
+        $controller->analyze($store_id);
 
         $this->info('The command was successful!');
     }
