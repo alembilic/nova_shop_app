@@ -15,7 +15,6 @@ class AnalyzeController extends Controller
     public function analyze($store_id = 0)
     {
         $status = 'complete';
-        $i = 0;
 
         ini_set('max_execution_time', 9000);
         //clearing DB
@@ -26,6 +25,8 @@ class AnalyzeController extends Controller
         $store_id ? $stores = [$store_id] : $stores = Order::groupBy('store_id')->get('store_id');
         if ($stores) dump("Found: " . count($stores) . " stores");
 
+        //inserted customers counter
+        $i = 0;
         foreach ($stores as $store) {
             $store_query = ' and store_id = ' . $store->store_id;
 
@@ -80,8 +81,7 @@ class AnalyzeController extends Controller
 
                 //inserting data
                 $insert_customer_data = Customer::insert($customers);
-                if ($insert_customer_data and $i++ % 100 == 0) dump("Added: " . $i . " customers of " . $totalOrders);
-                dd(2);
+                if ($insert_customer_data and ++$i % 100 == 0) dump("Added: " . $i . " customers of " . $totalOrders);
             }
         }
 
