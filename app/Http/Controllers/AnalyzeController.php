@@ -14,12 +14,13 @@ class AnalyzeController extends Controller
 {
     public function analyze($store_id = 0)
     {
+        $status = 'complete';
+        $i = 0;
+
         ini_set('max_execution_time', 9000);
         //clearing DB
         $clear = Customer::query()->delete();
         if ($clear) dump("Database cleared");
-
-        $status = 'complete';
 
         //finding stores
         $store_id ? $stores = [$store_id] : $stores = Order::groupBy('store_id')->get('store_id');
@@ -28,27 +29,30 @@ class AnalyzeController extends Controller
         foreach ($stores as $store) {
             $store_query = ' and store_id = ' . $store->store_id;
 
-            $orderEmails = DB::select("
-                select customer_email
-                FROM orders as order1
-                where status= '" . $status . "'" . $store_query . "
-                GROUP by customer_email");
-            $totalOrders = count($orderEmails);
+            $orderEmails = Order::select('customer_email')
+                ->where([
+                    ['status', '=', $status],
+                    ['store_id', '=', $store->store_id]
+                ])
+                ->groupBy('customer_email')
+                ->get();
+
+            $totalOrders = $orderEmails->count();
             if ($stores) dump("Found: " . $totalOrders . " customers");
 
-            for ($i = 0; $i < $totalOrders; $i++) {
+            foreach ($orderEmails as $orderEmail) {
 
                 //selecting data
                 $data = DB::select("
-                select store_id, max(order1.customer_firstname) as customer_firstname, min(order1.customer_lastname) as customer_lastname, min(order1.created_at) as first_purchase, sum(order1.total_item_count) as total_items, count(order1.customer_email) as order_times, order1.customer_email, sum(order1.grand_total) as total, sum(order1.shipping_amount) as shipping,
+                select id, store_id, max(order1.customer_firstname) as customer_firstname, min(order1.customer_lastname) as customer_lastname, min(order1.created_at) as first_purchase, sum(order1.total_item_count) as total_items, count(order1.customer_email) as order_times, order1.customer_email, sum(order1.grand_total) as total, sum(order1.shipping_amount) as shipping,
                 (
                     SELECT sum(cost) as total_cost from items 
                     inner join orders as o23 on o23.order_id = items.order_id
                     WHERE o23.customer_email = order1.customer_email and o23.status= '" . $status . "'
                 ) as cost 
                 FROM orders as order1
-                where  status= '" . $status . "'" . $store_query . " and customer_email ='" . $orderEmails[$i]->customer_email . "' 
-                GROUP by customer_email
+                where  status= '" . $status . "'" . $store_query . " and customer_email ='" . $orderEmail->customer_email . "' 
+                GROUP by customer_email, store_id
                 ");
 
                 //processing data
@@ -76,7 +80,8 @@ class AnalyzeController extends Controller
 
                 //inserting data
                 $insert_customer_data = Customer::insert($customers);
-                if ($insert_customer_data and $i % 100 == 0) dump("Added: " . $i . " customers of " . $totalOrders);
+                if ($insert_customer_data and $i++ % 100 == 0) dump("Added: " . $i . " customers of " . $totalOrders);
+                dd(2);
             }
         }
 
