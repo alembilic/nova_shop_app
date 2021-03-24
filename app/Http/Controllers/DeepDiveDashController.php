@@ -35,16 +35,16 @@ class DeepDiveDashController extends Controller
         }
 
         $db_data = DB::select("
-        SELECT items.name, count(items.name) as amount, sum(orders2.grand_total) total_sum 
+        SELECT items.name, count(items.name) as amount, sum(orders.grand_total) total_sum 
         FROM items as items 
         inner join (
            SELECT * FROM (
-  			  SELECT *, ROW_NUMBER() OVER (PARTITION BY customer_email ORDER BY created_at ASC) AS rn
-   				 FROM orders
+  			  SELECT *, ROW_NUMBER() OVER (PARTITION BY orders2.customer_email ORDER BY orders2.created_at ASC) AS rn
+   				 FROM orders as orders2
 					) x
-				WHERE rn = " . $n . " 
-        	)  as orders2 on  items.order_id = orders2.order_id
-        where orders2.status = 'complete' " . $whereDate . $storeQuery . " 
+                    WHERE rn = " . $n . " 
+                )  as orders on  items.order_id = orders.order_id
+        where orders.status = 'complete' " . $whereDate . $storeQuery . " 
         group by items.name
         order by amount desc, total_sum desc
         limit 10
