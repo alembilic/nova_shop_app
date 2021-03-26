@@ -12,6 +12,7 @@ use Acme\Analytics\Analytics;
 use App\Http\Controllers\AnalyzeController;
 use App\Nova\Dashboards\DataBreakdown;
 use App\Nova\Dashboards\DeepDive;
+use App\Nova\Dashboards\GatekeeperProducts;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
@@ -77,7 +78,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     protected function dashboards()
     {
-        return [new DataBreakdown, new DeepDive()];
+        return [new DataBreakdown, new DeepDive, new GatekeeperProducts];
     }
 
     /**

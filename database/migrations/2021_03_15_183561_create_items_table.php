@@ -23,6 +23,8 @@ class CreateItemsTable extends Migration
             $table->float('cost');
             $table->string('manufacture')->nullable();
             $table->timestamps();
+
+            $table->index(['order_id']);
         });
     }
 

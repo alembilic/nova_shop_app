@@ -27,6 +27,8 @@ class CreateOrdersTable extends Migration
             $table->float('grand_total')->nullable();
             $table->float('shipping_amount')->nullable();
             $table->timestamps();
+
+            $table->index(['customer_email', 'order_id']);
         });
     }
 
