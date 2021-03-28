@@ -35,7 +35,7 @@ class GatekeeperProductsController extends Controller
             $sku_query .= ')';
         } else $sku_query = '';
 
-        if (isset($selected_sku) and isset($sku_in_order_no)) {
+        if (isset($selected_sku) or isset($sku_in_order_no)) {
             $whole_sku_query = "and items.id in (
             select items2.id from items as items2 where items2.order_id in (SELECT order_id FROM ( SELECT orders4.order_id, ROW_NUMBER() OVER (PARTITION BY orders4.customer_email ORDER BY orders4.created_at ASC) AS rn FROM orders as orders4) x 
             " . $sku_in_order_no_query . ") 
