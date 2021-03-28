@@ -2,6 +2,7 @@
 
 namespace App\Nova\Dashboards;
 
+use Acme\Gatekeeper\Gatekeeper;
 use App\Http\Controllers\GatekeeperProductsController;
 use Laravel\Nova\Dashboard;
 
@@ -17,7 +18,7 @@ class GatekeeperProducts extends Dashboard
         $data = (new GatekeeperProductsController())->getData();
 
         return [
-            //
+            (new Gatekeeper())->withMeta($data)
         ];
     }
 

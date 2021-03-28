@@ -16,7 +16,8 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.12",
         "laravel/nova": "*",
-        "laravel/tinker": "^2.5"
+        "laravel/tinker": "^2.5",
+        "acme/gatekeeper": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -70,6 +71,10 @@
         {
             "type": "path",
             "url": "./nova-components/Analytics"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/Gatekeeper"
         }
     ]
 }

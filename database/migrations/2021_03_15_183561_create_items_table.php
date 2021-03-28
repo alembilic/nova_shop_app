@@ -24,7 +24,7 @@ class CreateItemsTable extends Migration
             $table->string('manufacture')->nullable();
             $table->timestamps();
 
-            $table->index(['order_id']);
+            $table->index(['order_id', 'name', 'created_at']);
         });
     }
 

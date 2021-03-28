@@ -9,7 +9,9 @@
         "prod": "npm run production",
         "production": "mix --production",
         "build-analytics": "cd nova-components/Analytics && npm run dev",
-        "build-analytics-prod": "cd nova-components/Analytics && npm run prod"
+        "build-analytics-prod": "cd nova-components/Analytics && npm run prod",
+        "build-gatekeeper": "cd nova-components/Gatekeeper && npm run dev",
+        "build-gatekeeper-prod": "cd nova-components/Gatekeeper && npm run prod"
     },
     "devDependencies": {
         "axios": "^0.21",

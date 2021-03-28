@@ -25,6 +25,8 @@ class CreateCustomersTable extends Migration
             $table->string('apfr')->nullable();
             $table->timestamp('first_purchase')->nullable();
             $table->timestamps();
+
+            $table->index(['email', 'first_purchase']);
         });
     }
 
