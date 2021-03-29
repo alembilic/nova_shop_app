@@ -46,7 +46,7 @@ class GatekeeperProductsController extends Controller
         } else $whole_sku_query = '';
 
         $data = DB::select("
-        SELECT name, count(items.id) as popularity FROM `items`
+        SELECT name,sku, count(items.id) as popularity FROM `items`
         inner join orders on items.order_id = orders.order_id
         where status = 'complete' 
         " . $popular_products_on_order_query . "
@@ -58,8 +58,8 @@ class GatekeeperProductsController extends Controller
         ");
 
         return [
-            'title' => 'Popular products',
-            'heads' => ['name', 'popularity'],
+            'title' => 'Gatekeeper products',
+            'heads' => ['name', 'sku', 'popularity'],
             'rows' => $data
         ];
     }
