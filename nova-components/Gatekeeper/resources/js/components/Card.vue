@@ -42,7 +42,7 @@
           <multiselect
             v-model="selectedSku"
             id="ajax"
-            label="sku"
+            label="options"
             track-by="sku"
             placeholder="Type to search name and SKU"
             open-direction="bottom"
@@ -120,6 +120,7 @@ export default {
       loading: false,
       selectedSku: [],
       sku: [],
+      options: [],
       isLoading: false,
     };
   },
@@ -151,6 +152,7 @@ export default {
         })
         .then((response) => {
           this.sku = response.data.items;
+          this.options = response.data.options;
           this.isLoading = false;
         });
     },

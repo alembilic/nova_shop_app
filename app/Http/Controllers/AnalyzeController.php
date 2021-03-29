@@ -85,6 +85,11 @@ class AnalyzeController extends Controller
             }
         }
 
+        //calculating customer_order_number
+        $set_customer_order_number = DB::update("update orders as orders1
+        set orders1.customer_order_number = (SELECT rn FROM ( SELECT *, ROW_NUMBER() OVER (PARTITION BY orders3.customer_email ORDER BY orders3.created_at ASC) AS rn FROM orders as orders3 where status ='complete' ) x where order_id = orders1.order_id)
+        where orders1.customer_order_number is null");
+
         ini_set('max_execution_time', 150);
         return 0;
     }

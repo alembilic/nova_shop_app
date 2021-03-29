@@ -798,6 +798,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       loading: false,
       selectedSku: [],
       sku: [],
+      options: [],
       isLoading: false
     };
   },
@@ -830,6 +831,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         params: { sku: query }
       }).then(function (response) {
         _this2.sku = response.data.items;
+        _this2.options = response.data.options;
         _this2.isLoading = false;
       });
     },
@@ -961,7 +963,7 @@ var render = function() {
                 {
                   attrs: {
                     id: "ajax",
-                    label: "sku",
+                    label: "options",
                     "track-by": "sku",
                     placeholder: "Type to search name and SKU",
                     "open-direction": "bottom",
