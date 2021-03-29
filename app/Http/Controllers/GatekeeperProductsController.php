@@ -26,20 +26,23 @@ class GatekeeperProductsController extends Controller
         if (isset($sku_in_order_no)) $sku_in_order_no_query = 'WHERE rn = ' . $sku_in_order_no;
         else $sku_in_order_no_query = '';
 
+        $sku_query = null;
         if (isset($selected_sku)) {
-            $sku_query = 'and items2.sku in (';
-            foreach ($selected_sku as $one) {
-                $sku_query .= "'" . $one['sku'] . "',";
+            if (count($selected_sku) > 0) {
+                $sku_query = 'and items2.sku in (';
+                foreach ($selected_sku as $one) {
+                    $sku_query .= "'" . $one['sku'] . "',";
+                }
+                $sku_query = substr($sku_query, 0, -1);
+                $sku_query .= ')';
             }
-            $sku_query = substr($sku_query, 0, -1);
-            $sku_query .= ')';
-        } else $sku_query = '';
+        }
 
-        if (isset($selected_sku) or isset($sku_in_order_no)) {
+        if (isset($selected_sku) or isset($sku_query)) {
             $whole_sku_query = "and items.id in (
             select items2.id from items as items2 where items2.order_id in (SELECT order_id FROM ( SELECT orders4.order_id, ROW_NUMBER() OVER (PARTITION BY orders4.customer_email ORDER BY orders4.created_at ASC) AS rn FROM orders as orders4) x 
-            " . $sku_in_order_no_query . ") 
-        " . $sku_query . ")";
+                " . $sku_in_order_no_query . ") 
+            " . $sku_query . ")";
         } else $whole_sku_query = '';
 
         $data = DB::select("
@@ -63,10 +66,13 @@ class GatekeeperProductsController extends Controller
 
     public function getSelectData(Request $request)
     {
-        $items = Item::where('sku', 'LIKE', '%' . $request->sku . '%')->groupBy('sku')->get(['sku'])->take(15);
+        $items = Item::where('sku', 'LIKE', '%' . $request->sku . '%')->orWhere('name', 'LIKE', '%' . $request->sku . '%')->groupBy('sku')->get(['sku', 'name'])->take(15);
+
+        $options = [];
+        foreach ($items as $item) array_push($options, ['sku' => $item->sku . ' - ' . $item->name]);
 
         return response()->json([
-            'items' => $items
+            'items' => $options
         ]);
     }
 

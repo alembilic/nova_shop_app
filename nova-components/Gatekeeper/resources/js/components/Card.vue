@@ -44,7 +44,7 @@
             id="ajax"
             label="sku"
             track-by="sku"
-            placeholder="Type to search SKU"
+            placeholder="Type to search name and SKU"
             open-direction="bottom"
             :options="sku"
             :multiple="true"
@@ -54,7 +54,7 @@
             :clear-on-select="false"
             :close-on-select="false"
             :options-limit="300"
-            :limit="3"
+            :limit="15"
             :limit-text="limitText"
             :max-height="600"
             :show-no-results="false"
@@ -62,8 +62,7 @@
             @search-change="asyncFind"
           >
             <span slot="noResult"
-              >Oops! No elements found. Consider changing the search
-              query.</span
+              >No elements found. Consider changing the search query.</span
             >
           </multiselect>
         </div>
@@ -77,7 +76,15 @@
         </button>
       </div>
     </div>
-    <table class="table w-full">
+
+    <div
+      v-if="card.rows.length == 0"
+      class="text-80 font-normal p-6 text-center"
+    >
+      <h3>No records found. Consider changing the search query.</h3>
+    </div>
+
+    <table v-if="card.rows.length != 0" class="table w-full">
       <thead>
         <th v-for="(head, index) in card.heads" :key="index" class="text-left">
           {{ head }}
@@ -132,7 +139,7 @@ export default {
         });
     },
     limitText(count) {
-      return `and ${count} other SKU`;
+      return `and ${count} other`;
     },
     asyncFind(query) {
       if (!query) return;
@@ -161,10 +168,10 @@ export default {
   height: 40px;
 }
 .my-select {
-  width: 30%;
+  width: 35%;
 }
 .my-input {
-  width: 20%;
+  width: 18%;
 }
 .float-left {
   margin-left: 5px;
