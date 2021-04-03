@@ -78,20 +78,20 @@
     </div>
 
     <div
-      v-if="card.rows.length == 0"
+      v-if="card.allData.data.length == 0"
       class="text-80 font-normal p-6 text-center"
     >
       <h3>No records found. Consider changing the search query.</h3>
     </div>
 
-    <table v-if="card.rows.length != 0" class="table w-full">
+    <table v-if="card.allData.data.length != 0" class="table w-full">
       <thead>
         <th v-for="(head, index) in card.heads" :key="index" class="text-left">
           {{ head }}
         </th>
       </thead>
       <tbody>
-        <tr v-for="row in card.rows" :key="row.id">
+        <tr v-for="row in card.allData.data" :key="row.id">
           <td v-for="(value, index) in row" :key="row.id + '-' + index">
             {{ value }}
           </td>
@@ -99,6 +99,45 @@
         </tr>
       </tbody>
     </table>
+    <div class="bg-20 rounded-b w-full">
+      <nav class="flex justify-between items-center">
+        <button
+          :disabled="card.allData.current_page == 1"
+          rel="prev"
+          dusk="previous"
+          class="btn btn-link py-3 px-4"
+          :class="{
+            'text-primary dim': card.allData.current_page > 1,
+            'text-80 opacity-50': card.allData.current_page == 1,
+          }"
+          @click="handleFilter(card.allData.current_page - 1)"
+        >
+          Previous
+        </button>
+        <span class="text-sm text-80 px-4">
+          {{
+            card.allData.from +
+            " - " +
+            card.allData.to +
+            " of " +
+            card.allData.total
+          }}
+        </span>
+        <button
+          rel="next"
+          dusk="next"
+          class="btn btn-link py-3 px-4"
+          :class="{
+            'text-primary dim': card.allData.next_page_url != null,
+            'text-80 opacity-50': card.allData.next_page_url == null,
+          }"
+          :disabled="card.allData.next_page_url == null"
+          @click="handleFilter(card.allData.current_page + 1)"
+        >
+          Next
+        </button>
+      </nav>
+    </div>
   </card>
 </template>
 
@@ -125,7 +164,8 @@ export default {
     };
   },
   methods: {
-    handleFilter() {
+    handleFilter(page = 1) {
+      if (page < 0) return;
       this.loading = true;
       axios
         .post("/api/filterData", {
@@ -133,6 +173,7 @@ export default {
           popular_products_on_order: this.popular_products_on_order,
           sku_in_order_no: this.sku_in_order_no,
           sku: this.selectedSku,
+          page,
         })
         .then((response) => {
           this.loading = false;

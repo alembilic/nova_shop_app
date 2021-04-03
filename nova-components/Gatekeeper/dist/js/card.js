@@ -787,6 +787,45 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["card"],
@@ -807,12 +846,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     handleFilter: function handleFilter() {
       var _this = this;
 
+      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
+      if (page < 0) return;
       this.loading = true;
       axios.post("/api/filterData", {
         least_no_of_orders: this.least_no_of_orders,
         popular_products_on_order: this.popular_products_on_order,
         sku_in_order_no: this.sku_in_order_no,
-        sku: this.selectedSku
+        sku: this.selectedSku,
+        page: page
       }).then(function (response) {
         _this.loading = false;
         _this.card = response.data;
@@ -1019,7 +1062,7 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
-      _vm.card.rows.length == 0
+      _vm.card.allData.data.length == 0
         ? _c("div", { staticClass: "text-80 font-normal p-6 text-center" }, [
             _c("h3", [
               _vm._v("No records found. Consider changing the search query.")
@@ -1027,7 +1070,7 @@ var render = function() {
           ])
         : _vm._e(),
       _vm._v(" "),
-      _vm.card.rows.length != 0
+      _vm.card.allData.data.length != 0
         ? _c("table", { staticClass: "table w-full" }, [
             _c(
               "thead",
@@ -1041,7 +1084,7 @@ var render = function() {
             _vm._v(" "),
             _c(
               "tbody",
-              _vm._l(_vm.card.rows, function(row) {
+              _vm._l(_vm.card.allData.data, function(row) {
                 return _c(
                   "tr",
                   { key: row.id },
@@ -1064,7 +1107,69 @@ var render = function() {
               0
             )
           ])
-        : _vm._e()
+        : _vm._e(),
+      _vm._v(" "),
+      _c("div", { staticClass: "bg-20 rounded-b w-full" }, [
+        _c("nav", { staticClass: "flex justify-between items-center" }, [
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-link py-3 px-4",
+              class: {
+                "text-primary dim": _vm.card.allData.current_page > 1,
+                "text-80 opacity-50": _vm.card.allData.current_page == 1
+              },
+              attrs: {
+                disabled: _vm.card.allData.current_page == 1,
+                rel: "prev",
+                dusk: "previous"
+              },
+              on: {
+                click: function($event) {
+                  return _vm.handleFilter(_vm.card.allData.current_page - 1)
+                }
+              }
+            },
+            [_vm._v("\n        Previous\n      ")]
+          ),
+          _vm._v(" "),
+          _c("span", { staticClass: "text-sm text-80 px-4" }, [
+            _vm._v(
+              "\n        " +
+                _vm._s(
+                  _vm.card.allData.from +
+                    " - " +
+                    _vm.card.allData.to +
+                    " of " +
+                    _vm.card.allData.total
+                ) +
+                "\n      "
+            )
+          ]),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-link py-3 px-4",
+              class: {
+                "text-primary dim": _vm.card.allData.next_page_url != null,
+                "text-80 opacity-50": _vm.card.allData.next_page_url == null
+              },
+              attrs: {
+                rel: "next",
+                dusk: "next",
+                disabled: _vm.card.allData.next_page_url == null
+              },
+              on: {
+                click: function($event) {
+                  return _vm.handleFilter(_vm.card.allData.current_page + 1)
+                }
+              }
+            },
+            [_vm._v("\n        Next\n      ")]
+          )
+        ])
+      ])
     ]
   )
 }
